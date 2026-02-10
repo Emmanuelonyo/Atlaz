@@ -4,10 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 
 type EntityType = "african" | "us";
+type Currency = "usd" | "ngn";
 
 interface PricingPlan {
   name: string;
-  price: string;
+  priceUSD: string;
+  priceNGN: string;
   description: string;
   features: string[];
   isPopular?: boolean;
@@ -17,7 +19,8 @@ const pricingData: Record<EntityType, PricingPlan[]> = {
   african: [
     {
       name: "Standard Package",
-      price: "$350",
+      priceUSD: "$350",
+      priceNGN: "₦525,000",
       description: "Perfect for local founders needing quick registration.",
       features: [
         "Company Registration",
@@ -28,7 +31,8 @@ const pricingData: Record<EntityType, PricingPlan[]> = {
     },
     {
       name: "Premium Package",
-      price: "$650",
+      priceUSD: "$650",
+      priceNGN: "₦975,000",
       description: "Comprehensive setup for serious businesses scaling up.",
       features: [
         "Everything in Standard",
@@ -41,7 +45,8 @@ const pricingData: Record<EntityType, PricingPlan[]> = {
     },
     {
       name: "Deluxe Package",
-      price: "$1,200",
+      priceUSD: "$1,200",
+      priceNGN: "₦1,800,000",
       description: "Full compliance and executive support for global expansion.",
       features: [
         "Everything in Premium",
@@ -55,7 +60,8 @@ const pricingData: Record<EntityType, PricingPlan[]> = {
   us: [
     {
       name: "Standard Package",
-      price: "$499",
+      priceUSD: "$499",
+      priceNGN: "₦750,000",
       description: "Essential US entity formation for startups.",
       features: [
         "Delaware C-Corp Formation",
@@ -66,7 +72,8 @@ const pricingData: Record<EntityType, PricingPlan[]> = {
     },
     {
       name: "Premium Package",
-      price: "$780",
+      priceUSD: "$780",
+      priceNGN: "₦1,170,000",
       description: "Complete package for scaling globally with US presence.",
       features: [
         "Everything in Standard",
@@ -79,7 +86,8 @@ const pricingData: Record<EntityType, PricingPlan[]> = {
     },
     {
       name: "Deluxe Package",
-      price: "$1,500",
+      priceUSD: "$1,500",
+      priceNGN: "₦2,250,000",
       description: "Enterprise-grade setup with full compliance and support.",
       features: [
         "Everything in Premium",
@@ -95,10 +103,14 @@ const pricingData: Record<EntityType, PricingPlan[]> = {
 function PricingCard({
   plan,
   isPopular,
+  currency,
 }: {
   plan: PricingPlan;
   isPopular?: boolean;
+  currency: Currency;
 }) {
+  const price = currency === "usd" ? plan.priceUSD : plan.priceNGN;
+  
   if (isPopular) {
     return (
       <div className="flex flex-col p-8 bg-white dark:bg-gray-800 rounded-3xl border-2 border-primary shadow-xl relative scale-105 z-10">
@@ -109,7 +121,7 @@ function PricingCard({
           <h3 className="text-lg font-semibold text-primary">{plan.name}</h3>
           <div className="mt-4 flex items-baseline gap-1">
             <span className="text-4xl font-bold text-gray-900 dark:text-white">
-              {plan.price}
+              {price}
             </span>
             <span className="text-sm text-gray-500 font-medium">/one-time</span>
           </div>
@@ -158,7 +170,7 @@ function PricingCard({
         </h3>
         <div className="mt-4 flex items-baseline gap-1">
           <span className="text-4xl font-bold text-gray-900 dark:text-white">
-            {plan.price}
+            {price}
           </span>
           <span className="text-sm text-gray-500 font-medium">/one-time</span>
         </div>
@@ -194,6 +206,7 @@ function PricingCard({
 
 export function Pricing() {
   const [entityType, setEntityType] = useState<EntityType>("african");
+  const [currency, setCurrency] = useState<Currency>("usd");
 
   const currentPlans = pricingData[entityType];
 
@@ -208,6 +221,8 @@ export function Pricing() {
             No hidden fees. Just simple, straightforward packages designed to
             get you running fast.
           </p>
+          
+          {/* Entity Type Toggle */}
           <div className="flex items-center p-1 bg-white/50 backdrop-blur-sm dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 mt-4">
             <button
               onClick={() => setEntityType("african")}
@@ -217,7 +232,7 @@ export function Pricing() {
                   : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
               }`}
             >
-              African Entity
+              🌍 African Entity
             </button>
             <button
               onClick={() => setEntityType("us")}
@@ -227,13 +242,46 @@ export function Pricing() {
                   : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
               }`}
             >
-              US Entity
+              🇺🇸 US Entity
             </button>
           </div>
+
+          {/* Currency Toggle */}
+          <div className="flex items-center gap-3 mt-4">
+            <span className="text-sm text-gray-500 dark:text-gray-400">Show prices in:</span>
+            <div className="flex items-center p-1 bg-gray-100 dark:bg-gray-800 rounded-full">
+              <button
+                onClick={() => setCurrency("usd")}
+                className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
+                  currency === "usd"
+                    ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+                    : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                }`}
+              >
+                🇺🇸 USD
+              </button>
+              <button
+                onClick={() => setCurrency("ngn")}
+                className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
+                  currency === "ngn"
+                    ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+                    : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                }`}
+              >
+                🇳🇬 NGN
+              </button>
+            </div>
+          </div>
+          
+          {currency === "ngn" && (
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+              * NGN prices are approximate at ₦1,500/$1. Final amount confirmed at checkout.
+            </p>
+          )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
           {currentPlans.map((plan, index) => (
-            <PricingCard key={index} plan={plan} isPopular={plan.isPopular} />
+            <PricingCard key={index} plan={plan} isPopular={plan.isPopular} currency={currency} />
           ))}
         </div>
       </div>
