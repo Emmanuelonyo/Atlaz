@@ -35,7 +35,7 @@ export function DashboardPreview() {
             <div className="flex-1 flex justify-center">
               <div className="px-4 py-1 bg-gray-700 rounded-md text-xs text-gray-400 flex items-center gap-2">
                 <span className="material-symbols-outlined text-[12px]">lock</span>
-                app.atlaz.com/dashboard
+                app.atlaz.co/dashboard
               </div>
             </div>
           </div>

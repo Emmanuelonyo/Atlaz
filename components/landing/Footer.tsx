@@ -137,7 +137,7 @@ export function Footer() {
                 <span className="material-symbols-outlined text-[18px]">
                   mail
                 </span>
-                hello@atlaz.com
+                hello@atlaz.co
               </li>
               <li className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-[18px]">
