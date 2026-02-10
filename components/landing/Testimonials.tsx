@@ -90,7 +90,7 @@ function TestimonialCard({
 }: TestimonialCardProps) {
   if (variant === "dark") {
     return (
-      <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 text-white relative flex flex-col justify-between overflow-hidden group h-full hover:-translate-y-2 transition-transform duration-300">
+      <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 text-white relative flex flex-col justify-between overflow-hidden group h-full hover:-translate-y-2 transition-transform duration-300 shadow-xl">
         <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
           <span className="material-symbols-outlined text-[120px] leading-none">
             format_quote
@@ -139,7 +139,7 @@ function TestimonialCard({
   }
 
   return (
-    <div className="bg-white/80 backdrop-blur-md dark:bg-gray-800 rounded-3xl p-8 border border-gray-200 dark:border-gray-700 relative flex flex-col justify-between group hover:border-primary/30 transition-colors h-full hover:-translate-y-2 transform duration-300">
+    <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 border border-gray-200 dark:border-gray-700 relative flex flex-col justify-between group hover:border-primary/30 transition-colors h-full hover:-translate-y-2 transform duration-300 shadow-xl">
       <div>
         <StarRating />
         <p className="text-lg font-medium text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
@@ -161,39 +161,42 @@ function TestimonialCard({
 
 export function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [mobileIndex, setMobileIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   const totalSlides = Math.ceil(testimonials.length / 3);
-
-  const goToSlide = useCallback((index: number) => {
-    setCurrentIndex(index);
-  }, []);
+  const totalMobileSlides = testimonials.length;
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % totalSlides);
   }, [totalSlides]);
+
+  const nextMobileSlide = useCallback(() => {
+    setMobileIndex((prev) => (prev + 1) % totalMobileSlides);
+  }, [totalMobileSlides]);
 
   useEffect(() => {
     if (!isAutoPlaying) return;
 
     const interval = setInterval(() => {
       nextSlide();
+      nextMobileSlide();
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying, nextSlide]);
+  }, [isAutoPlaying, nextSlide, nextMobileSlide]);
 
   const handleDotClick = (index: number) => {
     setIsAutoPlaying(false);
-    goToSlide(index);
-    // Resume auto-play after 10 seconds
+    setCurrentIndex(index);
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const currentTestimonials = testimonials.slice(
-    currentIndex * 3,
-    currentIndex * 3 + 3
-  );
+  const handleMobileDotClick = (index: number) => {
+    setIsAutoPlaying(false);
+    setMobileIndex(index);
+    setTimeout(() => setIsAutoPlaying(true), 10000);
+  };
 
   return (
     <div className="py-16 md:py-24 border-t border-gray-100/50 dark:border-gray-800">
@@ -206,7 +209,70 @@ export function Testimonials() {
           globally.
         </p>
       </div>
-      <div className="relative w-full max-w-7xl mx-auto px-4 md:px-6">
+
+      {/* Mobile Carousel - 1 card at a time */}
+      <div className="md:hidden relative w-full px-4">
+        <div className="overflow-hidden">
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${mobileIndex * 100}%)` }}
+          >
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                className="w-full flex-shrink-0 px-2"
+              >
+                <div className="min-h-[320px]">
+                  <TestimonialCard {...testimonial} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile Navigation Arrows */}
+        <button
+          onClick={() => {
+            setIsAutoPlaying(false);
+            setMobileIndex((prev) => (prev - 1 + totalMobileSlides) % totalMobileSlides);
+            setTimeout(() => setIsAutoPlaying(true), 10000);
+          }}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-200 dark:border-gray-700"
+          aria-label="Previous testimonial"
+        >
+          <span className="material-symbols-outlined text-lg">chevron_left</span>
+        </button>
+        <button
+          onClick={() => {
+            setIsAutoPlaying(false);
+            nextMobileSlide();
+            setTimeout(() => setIsAutoPlaying(true), 10000);
+          }}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-200 dark:border-gray-700"
+          aria-label="Next testimonial"
+        >
+          <span className="material-symbols-outlined text-lg">chevron_right</span>
+        </button>
+
+        {/* Mobile Dots */}
+        <div className="flex justify-center gap-2 mt-6">
+          {testimonials.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handleMobileDotClick(index)}
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                index === mobileIndex
+                  ? "bg-primary w-6"
+                  : "bg-gray-300 dark:bg-gray-700 w-2"
+              }`}
+              aria-label={`Go to testimonial ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop Carousel - 3 cards at a time */}
+      <div className="hidden md:block relative w-full max-w-7xl mx-auto px-4 md:px-6">
         {/* Navigation Arrows */}
         <button
           onClick={() => {
@@ -214,7 +280,7 @@ export function Testimonials() {
             setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
             setTimeout(() => setIsAutoPlaying(true), 10000);
           }}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300"
           aria-label="Previous testimonials"
         >
           <span className="material-symbols-outlined">chevron_left</span>
@@ -225,7 +291,7 @@ export function Testimonials() {
             nextSlide();
             setTimeout(() => setIsAutoPlaying(true), 10000);
           }}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300"
           aria-label="Next testimonials"
         >
           <span className="material-symbols-outlined">chevron_right</span>
@@ -240,7 +306,7 @@ export function Testimonials() {
             {[...Array(totalSlides)].map((_, slideIndex) => (
               <div
                 key={slideIndex}
-                className="flex flex-col md:grid md:grid-cols-3 gap-6 pb-12 w-full flex-shrink-0"
+                className="grid grid-cols-3 gap-6 pb-12 w-full flex-shrink-0"
               >
                 {testimonials
                   .slice(slideIndex * 3, slideIndex * 3 + 3)
@@ -254,7 +320,7 @@ export function Testimonials() {
           </div>
         </div>
 
-        {/* Dots Navigation */}
+        {/* Desktop Dots Navigation */}
         <div className="flex justify-center gap-2 mt-4">
           {[...Array(totalSlides)].map((_, index) => (
             <button
