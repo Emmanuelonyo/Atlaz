@@ -49,12 +49,15 @@ export function Hero() {
                 arrow_forward
               </span>
             </Link>
-            <Link
-              href="#pricing"
+            <a
+              href="https://calendly.com/atlaz"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex w-full sm:w-auto cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-8 bg-white/50 backdrop-blur-sm dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white text-lg font-bold tracking-wide hover:bg-white dark:hover:bg-gray-700 hover:border-primary/30 transition-all duration-200"
             >
-              <span className="truncate">View Pricing</span>
-            </Link>
+              <span className="material-symbols-outlined mr-2 text-[20px]">calendar_month</span>
+              <span className="truncate">Book a Call</span>
+            </a>
           </div>
 
           {/* Trust Badges */}
