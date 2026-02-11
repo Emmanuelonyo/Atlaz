@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -93,6 +94,10 @@ export function Navbar() {
             Login
           </Link>
         </div>
+        
+        {/* Theme Toggle */}
+        <ThemeToggle />
+        
         <Link
           href="/contact"
           className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-5 bg-gradient-to-r from-primary to-accent-teal text-white text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 hover:scale-105 transition-all duration-200 shadow-md shadow-primary/20"
@@ -102,16 +107,19 @@ export function Navbar() {
       </div>
 
       {/* Mobile Menu Button */}
-      <button
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        aria-label="Toggle mobile menu"
-        aria-expanded={isMobileMenuOpen}
-      >
-        <span className="material-symbols-outlined text-gray-600 dark:text-gray-300 text-[24px]">
-          {isMobileMenuOpen ? "close" : "menu"}
-        </span>
-      </button>
+      <div className="flex items-center gap-2 md:hidden">
+        <ThemeToggle />
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          aria-label="Toggle mobile menu"
+          aria-expanded={isMobileMenuOpen}
+        >
+          <span className="material-symbols-outlined text-gray-600 dark:text-gray-300 text-[24px]">
+            {isMobileMenuOpen ? "close" : "menu"}
+          </span>
+        </button>
+      </div>
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
